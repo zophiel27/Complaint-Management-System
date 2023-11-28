@@ -4,10 +4,14 @@
 #include <vector>
 #include <fstream>
 #include "class.h"
-
 using namespace std;
 
-int main()
-{
-    return 0;
+void System::notifymanager(){
+
+}
+void System::notifyteacher(){
+
+}
+void System::generateReport(){
+
 }
