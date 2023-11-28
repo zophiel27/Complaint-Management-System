@@ -63,7 +63,7 @@ public:
 
 };
 
-// Employee Class INT A manager, INT B employee
+// Employee Class
 class Employee {
 private:
     int id; // Employee ID
