@@ -9,7 +9,11 @@ using namespace std;
 //Class for main system
 class System{
     private:
+
     public:
+    void notifyteacher();
+    void notifymanager();
+    void generateReport();
 };
 
 // Complaint Class
@@ -27,6 +31,7 @@ class Complaint {
 	//vector<string> assignedEmployees; // Employees assigned to the complaint
 	string feedback; // Teacher's feedback
     public:
+
 };
 
 //Department Class
@@ -46,13 +51,18 @@ class Department{
 
 
 };
-
+class manager
+{
+    private:
+    int id;
+	string name; // manager name
+    vector<Employee *> employees;
+};
 // Employee Class INT A manager, INT B employee
 class Employee {
     private:
 	int id; // Employee ID
 	string name; // Employee name
-	string department; // Employee's department
     vector<string> tasks;
     public:
     //Employee
