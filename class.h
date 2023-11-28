@@ -1,7 +1,9 @@
 #include <iostream>
+#include <stdio.h>
 #include <string>
 #include <vector>
-using namespace std;
+#include <fstream>
+#include <ctime>
 
 class System;
 class Complaint;
@@ -16,11 +18,13 @@ class System{
 private:
 
 public:
+    System();
     void notifyteacher();
     void notifymanager();
     void generateReport();
 };
 
+enum ComplaintStatus { NEW, ASSIGNED, RESOLVED, CLOSED };
 // Complaint Class
 class Complaint {
 private:
@@ -28,14 +32,34 @@ private:
 	string description; // Complaint description
 	Teacher *teacher; // Teacher who filed the complaint
 	Department *department; // Department assigned to
-	string status; // Complaint status (new, assigned, resolved or closed. The teacher or manager can view its status any time)
-	string dateFiled; // Date complaint was filed
-	string dateAssigned; // Date complaint was assigned to an employee
-	string dateResolved; // Date complaint was marked as resolved
-	string dateClosed; // Date complaint was closed
+	ComplaintStatus status; // Complaint status (new, assigned, resolved or closed. The teacher or manager can view its status any time)
+	time_t datefiled; // Date complaint was filed
+	time_t dateAssigned; // Date complaint was assigned to an employee
+	time_t dateResolved; // Date complaint was marked as resolved
+	time_t dateClosed; // Date complaint was closed
 	//vector<string> assignedEmployees; // Employees assigned to the complaint
 	string feedback; // Teacher's feedback
 public:
+    Complaint(int ,string ,Teacher *, Department * );
+
+};
+
+//Department Class
+class Department{
+private:
+    string name; //IT, accounts or admin.
+    vector<Employee *> employees;
+    Manager* manager;
+    vector<Complaint *> tasks;
+    vector<Complaint *> assignedtasks;
+    vector<Complaint *> completedtasks;
+public:
+    Department(string ,vector<Employee *> ,Manager*);
+    void pushforReview();
+    void notifyteacher();
+    void assignTask();
+    void completeTask();
+
 
 };
 
@@ -46,42 +70,26 @@ private:
 	string name; // Employee name
     vector<string> tasks;
 public:
-    //Employee
+    Employee(int,string,vector<string>);
     void checkTasks();
     void completeTask();
     void updateSystem();
-    //manager
-    void reviewTask();
-    void reviewRequest();
-    void assignTask();
-    void checkComplainProgress();
-    void notifySystem();
 };
 
-//Department Class
-class Department{
-private:
-    string name; //IT, accounts or admin.
-    vector<Employee *> employees;
-    Employee* manager;
-    vector<Complaint *> tasks;
-    vector<Complaint *> assignedtasks;
-    vector<Complaint *> completedtasks;
-public:
-    void pushforReview();
-    void notifyteacher();
-    void assignTask();
-    void completeTask();
-
-
-};
-
+//Manager class
 class Manager
 {
 private:
     int id;
 	string name; // manager name
     vector<Employee *> employees;
+    public:
+    Manager(int,string ,vector<Employee *>);
+    void reviewTask();
+    void reviewRequest();
+    void assignTask();
+    void checkComplainProgress();
+    void notifySystem();
 };
 
 // Teacher Class
@@ -91,6 +99,7 @@ private:
 	string name; // Teacher name
     vector<string> notifications;
 public:
+    Teacher(int,string);
     void fileComplaint();//if there is any problem, or if any service/equipment is required, teacher shall forward her request to a particular supporting department such as IT, accounts or admin.
     void checkComplainProgress();
     void checkNotifications();
@@ -105,6 +114,7 @@ private:
 	int id; // Admin ID
 	string name; // Admin name
 public:
+    Admin(int,string);
     void addEmployee();
     void addManager();
     void addTeacher();
