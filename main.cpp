@@ -14,5 +14,6 @@ int main()
     Department *dpt[1];
     dpt[0]=new Department(nd);
     Teacher *t=new Teacher(*&dpt,1,1,name);
+    t->fileComplaint();
     return 0;
 }

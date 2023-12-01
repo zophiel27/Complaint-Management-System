@@ -33,9 +33,21 @@ Department::Department(string n,vector<Employee *> Employees,Manager* Mngr){//Co
     manager=Mngr;
 
 }
+void Complaint::printInfo() {
+
+    cout << id << endl << description << endl;
+    department->print();
+    teacher->print();
+}
 void Department::addTask(Complaint *task)
 {
     tasks.push_back(task);
+}
+void Department::print() {
+    cout << name << endl;
+}
+void Teacher::print() {
+    cout << name << endl;
 }
 Employee::Employee(int ID,string Name,vector<string> Tasks){//Constructor for for Employee
     id=ID;
@@ -50,7 +62,7 @@ Manager::Manager(int ID,string Name,vector<Employee *> Employees){//Constructor 
 
 Teacher::Teacher(Department *dpt[],int size,int ID,string Name){//Constructor for Teacher
     for(int i=0;i<size;i++)
-        departments.push_back(dpt[1]);
+        departments.push_back(dpt[i]);
     id=ID;
     name=Name;
 }
@@ -59,6 +71,7 @@ void Teacher :: fileComplaint()
     string s="Test complain";
     complain=new Complaint(s,this,departments[0]);
     departments[0]->addTask(complain);
+    complain->printInfo();
 }
 
 Admin::Admin(int ID,string Name){//Constructor for Admin

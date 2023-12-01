@@ -41,6 +41,7 @@ private:
 	string feedback; // Teacher's feedback
 public:
     Complaint(string ,Teacher *, Department * );
+    void printInfo();
 
 };
 
@@ -61,7 +62,7 @@ public:
     void notifyteacher();
     void assignTask();
     void completeTask();
-
+    void print();
 
 };
 
@@ -111,6 +112,7 @@ public:
     void printNotifications();
     void clearNotifications();
     void recordFeedback();
+    void print();
 };
 
 //Admin Class, can be singelton
