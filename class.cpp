@@ -24,7 +24,9 @@ Complaint::Complaint(string Description,Teacher *Teacher, Department *Dept ){//C
     datefiled=time(0);
 	//cout<<ctime(&datefiled);
 }
-
+Department::Department(string n){//Constructor for Department
+    name=n;
+   }
 Department::Department(string n,vector<Employee *> Employees,Manager* Mngr){//Constructor for Department
     name=n;
     employees=Employees;
@@ -55,7 +57,8 @@ Teacher::Teacher(Department *dpt[],int size,int ID,string Name){//Constructor fo
 void Teacher :: fileComplaint()
 {
     string s="Test complain";
-    complain=new Complaint(s,this,departments[1]);
+    complain=new Complaint(s,this,departments[0]);
+    departments[0]->addTask(complain);
 }
 
 Admin::Admin(int ID,string Name){//Constructor for Admin

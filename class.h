@@ -16,7 +16,7 @@ class Admin;
 //Class for main system
 class System{
 private:
-    vector<Department> *departments; 
+    vector<Department>*departments; 
 public:
     System(Department *dpt[],int size);
     void notifyteacher();
@@ -54,6 +54,7 @@ private:
     vector<Complaint *> assignedtasks;
     vector<Complaint *> completedtasks;
 public:
+    Department(string);
     Department(string ,vector<Employee *> ,Manager*);
     void addTask(Complaint *task);
     void pushforReview();
