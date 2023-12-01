@@ -2,15 +2,6 @@
 using namespace std;
 
 int Complaint:: id=0;
-void System::notifymanager(){
-
-}
-void System::notifyteacher(){
-
-}
-void System::generateReport(){
-
-}
 
 System::System(Department *dpt[],int size){
     for(int i=0;i<size;i++)
