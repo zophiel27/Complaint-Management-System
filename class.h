@@ -16,9 +16,9 @@ class Admin;
 //Class for main system
 class System{
 private:
-
+    vector<Department> *departments; 
 public:
-    System();
+    System(Department *dpt[],int size);
     void notifyteacher();
     void notifymanager();
     void generateReport();
@@ -28,7 +28,7 @@ enum ComplaintStatus { NEW, ASSIGNED, RESOLVED, CLOSED };
 // Complaint Class
 class Complaint {
 private:
-	int id; // Complaint ID
+	static int id; // Complaint ID
 	string description; // Complaint description
 	Teacher *teacher; // Teacher who filed the complaint
 	Department *department; // Department assigned to
@@ -40,7 +40,7 @@ private:
 	//vector<string> assignedEmployees; // Employees assigned to the complaint
 	string feedback; // Teacher's feedback
 public:
-    Complaint(int ,string ,Teacher *, Department * );
+    Complaint(string ,Teacher *, Department * );
 
 };
 
@@ -55,6 +55,7 @@ private:
     vector<Complaint *> completedtasks;
 public:
     Department(string ,vector<Employee *> ,Manager*);
+    void addTask(Complaint *task);
     void pushforReview();
     void notifyteacher();
     void assignTask();
@@ -69,6 +70,7 @@ private:
     int id; // Employee ID
 	string name; // Employee name
     vector<string> tasks;
+    
 public:
     Employee(int,string,vector<string>);
     void checkTasks();
@@ -98,8 +100,10 @@ private:
 	int id; // Teacher ID
 	string name; // Teacher name
     vector<string> notifications;
+    Complaint *complain;
+    vector<Department*> departments;
 public:
-    Teacher(int,string);
+    Teacher(Department *dpt[],int size,int,string);
     void fileComplaint();//if there is any problem, or if any service/equipment is required, teacher shall forward her request to a particular supporting department such as IT, accounts or admin.
     void checkComplainProgress();
     void checkNotifications();
