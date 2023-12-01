@@ -14,7 +14,7 @@ void System::generateReport(){
 
 System::System(Department *dpt[],int size){
     for(int i=0;i<size;i++)
-        departments->push_back(*dpt[i]);
+        departments.push_back(dpt[i]);
 }  
 Complaint::Complaint(string Description,Teacher *Teacher, Department *Dept ){//Constructor for Complaint
     id++;

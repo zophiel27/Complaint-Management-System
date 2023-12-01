@@ -4,7 +4,7 @@
 #include <vector>
 #include <fstream>
 #include <ctime>
-
+using namespace std;
 class System;
 class Complaint;
 class Department;
@@ -16,7 +16,7 @@ class Admin;
 //Class for main system
 class System{
 private:
-    vector<Department>*departments; 
+    vector<Department*>departments; 
 public:
     System(Department *dpt[],int size);
     void notifyteacher();
