@@ -9,12 +9,23 @@ using namespace std;
 
 int main()
 {
-    string name="Rafay";
-    string nd="IT";
-    Department *dpt[1];
-    dpt[0]=new Department(nd);
-    Teacher *t=new Teacher(*&dpt,1,1,name);
+    string tname = "Rafay";
+    string dname = "IT";
+
+    vector<string> tasks = {"Task 1", "Task 2"};
+    vector<Employee*> employees;
+    Employee* e1 = new Employee("employee-san-1", tasks);
+    Employee* e2 = new Employee("employee-san-2", tasks);
+    employees.push_back(e1);
+    employees.push_back(e2);
+    Manager* mgr = new Manager("manager-san", employees);
+    
+    Department* dpt[1] = { new Department(dname, employees, mgr) };
+
+    Teacher* t = new Teacher(*&dpt, 1, 1, tname);
     t->fileComplaint();
+    cout << endl;
+
     system("pause");
     return 0;
 }
