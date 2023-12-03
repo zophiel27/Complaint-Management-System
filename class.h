@@ -16,9 +16,12 @@ class Admin;
 //Class for main system
 class System{
 private:
-    vector<Department*>departments; 
+    vector<Department*>departments;
+    vector<Teacher*>teachers; 
 public:
-    System(Department *dpt[],int size);
+    System();//Dept initialized, hard coded teachers initialized
+    void printUI();
+    void Login();
     void notifyteacher();
     void notifymanager();
     void generateReport();
@@ -38,10 +41,11 @@ private:
 	time_t dateAssigned; // Date complaint was assigned to an employee
 	time_t dateResolved; // Date complaint was marked as resolved
 	time_t dateClosed; // Date complaint was closed
-	//vector<string> assignedEmployees; // Employees assigned to the complaint
+	vector<Employee*> assignedEmployees; // Employees assigned to the complaint
 	string feedback; // Teacher's feedback
 public:
     Complaint(string, Teacher*, Department*);
+    void assignedEmployee(vector<Employee*> assignedEmployees);
     void printInfo();
 
 };
@@ -59,6 +63,9 @@ public:
     Department(string);
     Department(string, vector<Employee*>, Manager*);
     void addTask(Complaint *task);
+    void addManager();
+    void addEmployees();
+    void updateTaskList();//
     void pushforReview();
     void notifyteacher();
     void assignTask();
@@ -76,9 +83,12 @@ private:
     vector<string> tasks;
     
 public:
+    Employee(string);
     Employee(string, vector<string>);
+    int getID();
+    string getName();
     void checkTasks();
-    void completeTask();
+    int completeTask();
     void updateSystem();
     void print();
 };
@@ -91,11 +101,15 @@ private:
     int id;
 	string name; // manager name
     vector<Employee*> employees;
+    vector<Complaint*> tasks;
+    vector<Complaint*> assignedtasks;
+    vector<Complaint*> completedtasks;
 public:
+    Manager(string);
     Manager(string, vector<Employee*>);
     void reviewTask();
     void reviewRequest();
-    void assignTask();
+    int assignTask();
     void checkComplainProgress();
     void notifySystem();
     void print();
@@ -112,12 +126,16 @@ private:
 public:
     Teacher(Department* dpt[], int size, int, string);
     void fileComplaint(); //if there is any problem, or if any service/equipment is required, teacher shall forward her request to a particular supporting department such as IT, accounts or admin.
+    int getID();
+    string getName();
+    void printUI();
+    void teacherUI();
     void checkComplainProgress();
     void checkNotifications();
     void printNotifications();
     void clearNotifications();
     void recordFeedback();
-    void print();
+    void print();//Print info
 };
 
 //Admin Class, can be singelton
