@@ -84,8 +84,8 @@ void Department::addTask(Complaint* task)
 }
 void Department::addEmployees()
 {
-    Employee* e1 = new Employee("employee-san-1");
-    Employee* e2 = new Employee("employee-san-2");
+    Employee* e1 = new Employee("emp1");
+    Employee* e2 = new Employee("emp2");
     employees.push_back(e1);
     employees.push_back(e2);
 }
@@ -163,7 +163,7 @@ void Teacher::printUI()
     system("cls");
     cout << "Welcome " << name;
     cout << "\nSelect from the options below:";
-    cout << "\nPress 1 to file Complaint\nPress 2 to check notifications\nPress 3 to check status of Previous Complaint\nPress 4 to Logout\n";
+    cout << "\nPress 1 to file Complaint\nPress 2 to check notifications\nPress 3 to check status of Previous Complaints\nPress 4 to Logout\n";
 }
 void Teacher::teacherUI()
 {
@@ -178,7 +178,7 @@ void Teacher::teacherUI()
             fileComplaint();
             break;
         case 3:
-            complain->printInfo();  
+            printComplains();
             cout << "\nPress any key to continue";
             _getch();
             break;
@@ -193,6 +193,7 @@ Teacher::Teacher(Department* dpt[], int size, int ID, string Name) {//Constructo
         departments.push_back(dpt[i]);
     id = ID;
     name = Name;
+    no = 0;
 }
 void Teacher::fileComplaint()
 {
@@ -200,13 +201,16 @@ void Teacher::fileComplaint()
     cin.ignore();
     cout << "\nEnter Description of Complaint: ";
     getline(cin, des);
-    complain = new Complaint(des, this, departments[0]);
+    complain.push_back(new Complaint(des, this, departments[0]));
     for (int i = 0; i < departments.size(); i++) {
-        departments[i]->addTask(complain);
-       // complain->printInfo();
+        departments[i]->addTask(complain[complain.size()-1]);
     }
 }
-
+void Teacher::printComplains() {
+    for (int i = 0; i < complain.size(); i++) {
+        complain[i]->printInfo();
+    }
+}
 Admin::Admin(int ID, string Name) {//Constructor for Admin
     id = ID;
     name = Name;
