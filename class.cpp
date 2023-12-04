@@ -5,7 +5,7 @@ int Complaint::cID = 0;
 int Employee::empID = 0;
 int Manager::mgrID = 0;
 
-System::System(){
+System::System() {
     string tname = "Rafay";
     string dname = "IT";
     Department* departments[1] = { new Department(dname) };
@@ -14,111 +14,76 @@ System::System(){
 }
 void System::printUI()
 {
-        system("cls");
-        cout<<"Welcome to the Complaint Management System";
-        cout<<"\nPress 1 to Login: ";
+    system("cls");
+    cout << "Welcome to the Complaint Management System";
+    cout << "\nPress 1 to Login: ";
 }
 void System::Login()
 {
-    int temp=1;
+    int temp = 1;
     int UID;
     string Uname;
-    while(temp)
+    while (temp)
     {
-        bool logged=0;
+        bool logged = 0;
         printUI();
-        cin>>temp;
-        if(temp)
+        cin >> temp;
+        if (temp)
         {
-            cout<<"\nEnter ID: ";
-            cin>>UID;
-            cout<<"Enter your name: ";
-            cin>>Uname;
-            for(int i=0;i<teachers.size()&&!logged;i++)
-                {
-                    if(UID==teachers[i]->getID())
-                        if(Uname==teachers[i]->getName())
-                        {
-                            logged=1;
-                            teachers[i]->teacherUI();
-                            }
-                }
-            if(!logged)
-                {
-                    cout<<"Invalid Credentials\nPress 1 to Retry: ";
-                    cin>>temp;
-                }
+            cout << "\nEnter ID: ";
+            cin >> UID;
+            cout << "Enter your name: ";
+            cin >> Uname;
+            for (int i = 0; i < teachers.size() && !logged; i++)
+            {
+                if (UID == teachers[i]->getID())
+                    if (Uname == teachers[i]->getName())
+                    {
+                        logged = 1;
+                        teachers[i]->teacherUI();
+                    }
+            }
+            if (!logged)
+            {
+                cout << "\nInvalid Credentials\nPress 1 to Retry: ";
+                cin >> temp;
+            }
         }
     }
 
-        
-}
-void Teacher::print() {
-    cout << "Teacher ID: " << id << ", Name: " << name << endl;
-}
-int Teacher::getID()
-{
-    return id;
-}
-string Teacher::getName()
-{
-    return name;
-}
-void Teacher::printUI()
-{
-    system("cls");
-    cout<<"Welcome "<<name;
-    cout<<"\nSelect from the options below";
-    cout<<"\nPress 1 to file Complaint\nPress 2 to check notifications\nPress 3 to check status of Previous Complaint\nPress 4 to Logout\n";
-}
-void Teacher:: teacherUI()
-{
-    int option;
-    printUI();
-    cin>>option;
-    switch (option)
-    {
-        case 1:
-            fileComplaint();
-            break;
-        case 4:
-            return;
-    }
-    return;
 
 }
 void Complaint::printInfo() {
 
-    cout << "Complaint ID: " << id << ", Description: " << description << endl;
+    cout << "\nComplaint ID: " << id << ", Description: " << description << endl;
     department->print();
     teacher->print();
-}  
-Complaint::Complaint(string Description,Teacher *Teacher, Department *Dept ){//Constructor for Complaint
+}
+Complaint::Complaint(string Description, Teacher* Teacher, Department* Dept) {//Constructor for Complaint
     cID++;
     id = cID;
-    description=Description;
-    teacher=Teacher;
-    department=Dept;
-    datefiled=time(0);
-	//cout<<ctime(&datefiled);
+    description = Description;
+    teacher = Teacher;
+    department = Dept;
+    datefiled = time(0);
+    //cout<<ctime(&datefiled);
 }
-Department::Department(string n){//Constructor for Department
-    name=n;
+Department::Department(string n) {//Constructor for Department
+    name = n;
     addEmployees();
     addManager();
 }
-Department::Department(string n,vector<Employee *> Employees,Manager* Mngr){//Constructor for Department
-    name=n;
-    employees=Employees;
-    manager=Mngr;
+Department::Department(string n, vector<Employee*> Employees, Manager* Mngr) {//Constructor for Department
+    name = n;
+    employees = Employees;
+    manager = Mngr;
 }
-void Department::addTask(Complaint *task)
+void Department::addTask(Complaint* task)
 {
     tasks.push_back(task);
 }
 void Department::addEmployees()
 {
-    vector<Employee*> employees;
     Employee* e1 = new Employee("employee-san-1");
     Employee* e2 = new Employee("employee-san-2");
     employees.push_back(e1);
@@ -126,9 +91,10 @@ void Department::addEmployees()
 }
 void Department::addManager()
 {
-    Manager* mgr = new Manager("manager-san",employees);
+    manager = new Manager("manager-san", employees);
 }
-void Department::print() {
+void Department::print() 
+{
     cout << "Dept Name: " << name << endl;
     manager->print();
     for (int i = 0; i < employees.size(); i++) {
@@ -144,16 +110,16 @@ void Employee::print() {
         cout << endl;
     }
 }
-Employee::Employee(string Name){//Constructor for for Employee
+Employee::Employee(string Name) {//Constructor for for Employee
     empID++;
     id = empID;
-    name=Name;
+    name = Name;
 }
-Employee::Employee(string Name,vector<string> Tasks){//Constructor for for Employee
+Employee::Employee(string Name, vector<string> Tasks) {//Constructor for for Employee
     empID++;
     id = empID;
-    name=Name;
-    tasks=Tasks;
+    name = Name;
+    tasks = Tasks;
 }
 int Employee::getID()
 {
@@ -165,45 +131,84 @@ string Employee::getName()
 }
 void Manager::print() {
     cout << "Manager ID: " << id << ", Name: " << name << endl;
-    cout << "\nManages: \n";
+    cout << "Manages: \n";
     for (int i = 0; i < employees.size(); i++) {
         employees[i]->print();
     }
 }
-Manager::Manager(string Name){//Constructor for Manager
+Manager::Manager(string Name) {//Constructor for Manager
     mgrID++;
     id = mgrID;
-    name=Name;
+    name = Name;
 }
-Manager::Manager(string Name,vector<Employee *> Employees){//Constructor for Manager
+Manager::Manager(string Name, vector<Employee*> Employees) {//Constructor for Manager
     mgrID++;
     id = mgrID;
-    name=Name;
-    employees=Employees;
+    name = Name;
+    employees = Employees;
 }
+void Teacher::print() {
+    cout << "Teacher ID: " << id << ", Name: " << name << endl;
+}
+int Teacher::getID()
+{
+    return id;
+}
+string Teacher::getName()
+{
+    return name;
+}
+void Teacher::printUI()
+{
+    system("cls");
+    cout << "Welcome " << name;
+    cout << "\nSelect from the options below:";
+    cout << "\nPress 1 to file Complaint\nPress 2 to check notifications\nPress 3 to check status of Previous Complaint\nPress 4 to Logout\n";
+}
+void Teacher::teacherUI()
+{
+    int option;
 
-Teacher::Teacher(Department *dpt[],int size,int ID,string Name){//Constructor for Teacher
-    for(int i=0;i<size;i++)
-        departments.push_back(dpt[i]);
-    id=ID;
-    name=Name;
+    while (1) { // (for now) this while loop is to stay logged in
+        printUI();
+        cin >> option;
+        switch (option)
+        {
+        case 1:
+            fileComplaint();
+            break;
+        case 3:
+            complain->printInfo();  
+            cout << "\nPress any key to continue";
+            _getch();
+            break;
+        case 4:
+            return;
+        }
+    }
+    return;
 }
-void Teacher :: fileComplaint()
+Teacher::Teacher(Department* dpt[], int size, int ID, string Name) {//Constructor for Teacher
+    for (int i = 0; i < size; i++)
+        departments.push_back(dpt[i]);
+    id = ID;
+    name = Name;
+}
+void Teacher::fileComplaint()
 {
     string des;
     cin.ignore();
-    cout<<"\nEnter Description of Complaint ";
-    getline(cin,des);
+    cout << "\nEnter Description of Complaint: ";
+    getline(cin, des);
     complain = new Complaint(des, this, departments[0]);
     for (int i = 0; i < departments.size(); i++) {
         departments[i]->addTask(complain);
-        complain->printInfo();
+       // complain->printInfo();
     }
-    
 }
 
-Admin::Admin(int ID,string Name){//Constructor for Admin
-    id=ID;
-    name=Name;
+Admin::Admin(int ID, string Name) {//Constructor for Admin
+    id = ID;
+    name = Name;
 }
 

@@ -4,6 +4,7 @@
 #include <vector>
 #include <fstream>
 #include <ctime>
+#include <conio.h>
 using namespace std;
 class System;
 class Complaint;
@@ -28,6 +29,7 @@ public:
 };
 
 enum ComplaintStatus { NEW, ASSIGNED, RESOLVED, CLOSED };
+
 // Complaint Class
 class Complaint {
 private:
