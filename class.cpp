@@ -45,6 +45,13 @@ void System::Login()
             }
             if (!logged)
             {
+                for (int i = 0; i < departments.size(); i++)
+                {
+                    departments[i]->login(UID,Uname,logged);
+                }
+            }
+            if (!logged)
+            {
                 cout << "\nInvalid Credentials\nPress 1 to Retry: ";
                 cin >> temp;
             }
@@ -56,8 +63,9 @@ void System::Login()
 void Complaint::printInfo() {
 
     cout << "\nComplaint ID: " << id << ", Description: " << description << endl;
-    department->print();
-    teacher->print();
+    //department->print();
+    //teacher->print();
+    
 }
 Complaint::Complaint(string Description, Teacher* Teacher, Department* Dept) {//Constructor for Complaint
     cID++;
@@ -67,6 +75,27 @@ Complaint::Complaint(string Description, Teacher* Teacher, Department* Dept) {//
     department = Dept;
     datefiled = time(0);
     //cout<<ctime(&datefiled);
+}
+void Department::login(int UID,string Uname,bool& logged)
+{
+
+    for (int i = 0; i < employees.size() && !logged; i++)
+    {
+        if (UID == employees[i]->getID())
+            if (Uname == employees[i]->getName())
+            {
+                logged = 1;
+                employees[i]->employeesUI();
+            }
+    }
+    if(!logged)
+        if (UID == manager->getID())
+            if (Uname == manager->getName())
+            {
+                logged = 1;
+                manager->managerUI();
+            }
+    return;
 }
 Department::Department(string n) {//Constructor for Department
     name = n;
@@ -91,7 +120,7 @@ void Department::addEmployees()
 }
 void Department::addManager()
 {
-    manager = new Manager("manager-san", employees);
+    manager = new Manager("manager", employees);
 }
 void Department::print() 
 {
@@ -102,7 +131,45 @@ void Department::print()
     }
 }
 
+void Department::assignTask()
+{
 
+    assignedtasks.push_back(tasks[tasks.size()-1]);
+    tasks.pop_back();
+    assignedtasks[0]->printInfo();
+    manager->assignTask(assignedtasks[assignedtasks.size()-1]);
+
+}
+
+void Employee::printUI()
+{
+    system("cls");
+    cout << "Welcome " << name;
+    cout << "\nSelect from the options below:";
+    cout << "\nPress 1 \nPress 2 \nPress 3 \nPress 4 to Logout\n";
+}
+void Employee::employeesUI()
+{
+    int option;
+
+    while (1) { // (for now) this while loop is to stay logged in
+        printUI();
+        cin >> option;
+        switch (option)
+        {
+        case 1:
+            
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        case 4:
+            return;
+        }
+    }
+    return;
+}
 void Employee::print() {
     cout << "Employee ID: " << id << ", Name: " << name << "\nWith Tasks: \n";
     for (int i = 0; i < tasks.size(); i++) {
@@ -115,7 +182,7 @@ Employee::Employee(string Name) {//Constructor for for Employee
     id = empID;
     name = Name;
 }
-Employee::Employee(string Name, vector<string> Tasks) {//Constructor for for Employee
+Employee::Employee(string Name, vector<Complaint*> Tasks) {//Constructor for for Employee
     empID++;
     id = empID;
     name = Name;
@@ -127,6 +194,48 @@ int Employee::getID()
 }
 string Employee::getName()
 {
+    return name;
+}
+void Employee::receiveTask(Complaint* t)
+{
+    tasks.push_back(t);
+    tasks[0]->printInfo();
+    cout << "received by "<<name;
+    _getch();
+
+}
+void Manager::printUI()
+{
+    system("cls");
+    cout << "Welcome " << name;
+    cout << "\nSelect from the options below:";
+    cout << "\nPress 1 \nPress 2 \nPress 3 \nPress 4 to Logout\n";
+}
+void Manager::managerUI()
+{
+    int option;
+
+    while (1) { // (for now) this while loop is to stay logged in
+        printUI();
+        cin >> option;
+        switch (option)
+        {
+        case 1:
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        case 4:
+            return;
+        }
+    }
+    return;
+}
+int Manager::getID() {
+    return id;
+}
+string Manager::getName() {
     return name;
 }
 void Manager::print() {
@@ -147,6 +256,16 @@ Manager::Manager(string Name, vector<Employee*> Employees) {//Constructor for Ma
     name = Name;
     employees = Employees;
 }
+void Manager::assignTask(Complaint* task)
+{
+    int emp;
+    assignedtasks.push_back(task);
+    for (int i=0;i<employees.size();i++)
+        employees[i]->print();
+    cout << "\nSelect Employee to assign the task: ";
+    cin >> emp;
+    employees[emp-1]->receiveTask(task);
+}
 void Teacher::print() {
     cout << "Teacher ID: " << id << ", Name: " << name << endl;
 }
@@ -157,6 +276,14 @@ int Teacher::getID()
 string Teacher::getName()
 {
     return name;
+}
+void Teacher::temp()
+{
+    complain[0]->temp();
+}
+void Complaint::temp()
+{
+    department[0].assignTask();
 }
 void Teacher::printUI()
 {
@@ -176,6 +303,9 @@ void Teacher::teacherUI()
         {
         case 1:
             fileComplaint();
+            break;
+        case 2:
+            temp();
             break;
         case 3:
             printComplains();

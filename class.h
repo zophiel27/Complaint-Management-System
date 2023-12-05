@@ -28,6 +28,12 @@ public:
     void generateReport();
 };
 
+class Person
+{
+//public:
+//    int getID()=0;
+//    string getName()=0;
+};
 enum ComplaintStatus { NEW, ASSIGNED, RESOLVED, CLOSED };
 
 // Complaint Class
@@ -49,6 +55,7 @@ public:
     Complaint(string, Teacher*, Department*);
     void assignedEmployee(vector<Employee*> assignedEmployees);
     void printInfo();
+    void temp();
 
 };
 
@@ -67,36 +74,41 @@ public:
     void addTask(Complaint *task);
     void addManager();
     void addEmployees();
-    void updateTaskList();//
+    void updateTaskList();
     void pushforReview();
     void notifyteacher();
     void assignTask();
     void completeTask();
     void print();
+    void login(int, string,bool &logged);
 
 };
 
 // Employee Class
-class Employee {
+class Employee //:public Person
+{
 private:
     static int empID; // Employee ID
     int id;
 	string name; // Employee name
-    vector<string> tasks;
+    vector<Complaint*> tasks;
     
 public:
     Employee(string);
-    Employee(string, vector<string>);
+    Employee(string, vector<Complaint*>);
     int getID();
     string getName();
+    void receiveTask(Complaint*);
     void checkTasks();
     int completeTask();
     void updateSystem();
     void print();
+    void employeesUI();
+    void printUI();
 };
 
 //Manager class
-class Manager
+class Manager //:public Person
 {
 private:
     static int mgrID;
@@ -109,16 +121,21 @@ private:
 public:
     Manager(string);
     Manager(string, vector<Employee*>);
+    int getID();
+    string getName();
     void reviewTask();
     void reviewRequest();
-    int assignTask();
+    void assignTask(Complaint* task);
     void checkComplainProgress();
     void notifySystem();
     void print();
+    void managerUI();
+    void printUI();
 };
 
 // Teacher Class
-class Teacher {
+class Teacher //:public Person 
+{
 private:
 	int id; // Teacher ID
 	string name; // Teacher name
@@ -139,6 +156,7 @@ public:
     void printComplains();
     void print();//Print info
     int getID();
+    void temp();
     string getName();
 };
 
