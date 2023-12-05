@@ -149,7 +149,7 @@ void Employee::printUI()
     system("cls");
     cout << "Welcome " << name;
     cout << "\nSelect from the options below:";
-    cout << "\nPress 1 \nPress 2 \nPress 3 \nPress 4 to Logout\n";
+    cout << "\nPress 1 Check Tasks\nPress 2 Complete Task\nPress 3 \nPress 4 to Logout\n";
 }
 void Employee::employeesUI()
 {
@@ -157,12 +157,15 @@ void Employee::employeesUI()
     while (1) { // (for now) this while loop is to stay logged in
         printUI();
         cin >> option;
+        system("cls");
         switch (option)
         {
         case 1:
-            
+            checkTasks();
+            _getch();
             break;
         case 2:
+            completeTask();
             break;
         case 3:
             break;
@@ -173,7 +176,7 @@ void Employee::employeesUI()
     return;
 }
 void Employee::print() {
-    cout << "Employee ID: " << id << ", Name: " << name << "\nWith Tasks:";
+    cout << "\nEmployee ID: " << id << ", Name: " << name << "\nWith Tasks:";
     for (int i = 0; i < tasks.size(); i++) {
         tasks[i]->printInfo();
         cout << endl;
@@ -206,6 +209,26 @@ void Employee::receiveTask(Complaint* t)//Gets tje task for employee to complete
     _getch();
 
 }
+void Employee::checkTasks()
+{
+    for(int i=0;i<tasks.size();i++)
+        {cout<<i+1<<") ";
+        tasks[i]->printInfo();}
+}
+void Employee::completeTask()
+{
+    int tsk;
+    checkTasks();
+    cout<<"Select task to Complete: ";
+    cin>>tsk;
+    tasks[tsk];
+}
+void Manager::checkTasks()
+{
+    for(int i=0;i<tasks.size();i++)
+        {cout<<i+1<<") ";
+        tasks[i]->printInfo();}
+}
 void Manager::printUI()
 {
     system("cls");
@@ -219,6 +242,7 @@ void Manager::managerUI()
     while (1) { // (for now) this while loop is to stay logged in
         printUI();
         cin >> option;
+        system("cls");
         switch (option)
         {
         case 1:
@@ -266,11 +290,7 @@ void Manager::getTask(Complaint* task)
 void Manager::assignTask()//Assigns 1 task to the selected emp
 {
     int emp,tsks;
-    for(int i=0;i<tasks.size();i++)
-    {
-        cout<<i+1<<")";
-        tasks[i]->printInfo();
-    }
+    checkTasks();
     cout<<"\nEnter the task number you want to assign: ";
     cin>>tsks;
     assignedtasks.push_back(tasks[tsks-1]);

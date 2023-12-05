@@ -100,7 +100,7 @@ public:
     string getName();
     void receiveTask(Complaint*);
     void checkTasks();
-    int completeTask();
+    void completeTask();
     void updateSystem();
     void print();
     void employeesUI();
@@ -126,6 +126,7 @@ public:
     void reviewTask();
     void reviewRequest();
     void getTask(Complaint* task);
+    void checkTasks();
     void assignTask();
     void checkComplainProgress();
     void notifySystem();
