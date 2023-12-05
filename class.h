@@ -4,6 +4,7 @@
 #include <vector>
 #include <fstream>
 #include <ctime>
+#include <conio.h>
 using namespace std;
 class System;
 class Complaint;
@@ -28,6 +29,7 @@ public:
 };
 
 enum ComplaintStatus { NEW, ASSIGNED, RESOLVED, CLOSED };
+
 // Complaint Class
 class Complaint {
 private:
@@ -121,13 +123,12 @@ private:
 	int id; // Teacher ID
 	string name; // Teacher name
     vector<string> notifications;
-    Complaint* complain;
+    vector<Complaint*> complain;
     vector<Department*> departments;
+    int no;
 public:
     Teacher(Department* dpt[], int size, int, string);
     void fileComplaint(); //if there is any problem, or if any service/equipment is required, teacher shall forward her request to a particular supporting department such as IT, accounts or admin.
-    int getID();
-    string getName();
     void printUI();
     void teacherUI();
     void checkComplainProgress();
@@ -135,7 +136,10 @@ public:
     void printNotifications();
     void clearNotifications();
     void recordFeedback();
+    void printComplains();
     void print();//Print info
+    int getID();
+    string getName();
 };
 
 //Admin Class, can be singelton
