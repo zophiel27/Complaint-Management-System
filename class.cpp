@@ -8,15 +8,16 @@ int Manager::mgrID = 0;
 System::System() {
     string tname = "Rafay";
     string dname = "IT";
-    Department* departments[1] = { new Department(dname) };
-    Teacher* tr = new Teacher(*&departments, 1, 1, tname);
+    Department* dpt =  new Department(dname);
+    departments.push_back(dpt);
+    Teacher* tr = new Teacher(departments, 1, 1, tname);
     teachers.push_back(tr);
 }
 void System::printUI()
 {
     system("cls");
     cout << "Welcome to the Complaint Management System";
-    cout << "\nPress 1 to Login: ";
+    cout << "\nPress 1 to Login || Press 0 to Exit: ";
 }
 void System::Login()
 {
@@ -151,7 +152,6 @@ void Employee::printUI()
 void Employee::employeesUI()
 {
     int option;
-
     while (1) { // (for now) this while loop is to stay logged in
         printUI();
         cin >> option;
@@ -171,9 +171,9 @@ void Employee::employeesUI()
     return;
 }
 void Employee::print() {
-    cout << "Employee ID: " << id << ", Name: " << name << "\nWith Tasks: \n";
+    cout << "Employee ID: " << id << ", Name: " << name << "\nWith Tasks:";
     for (int i = 0; i < tasks.size(); i++) {
-        cout << "-" << tasks[i];
+        tasks[i]->printInfo();
         cout << endl;
     }
 }
@@ -214,7 +214,6 @@ void Manager::printUI()
 void Manager::managerUI()
 {
     int option;
-
     while (1) { // (for now) this while loop is to stay logged in
         printUI();
         cin >> option;
@@ -318,7 +317,7 @@ void Teacher::teacherUI()
     }
     return;
 }
-Teacher::Teacher(Department* dpt[], int size, int ID, string Name) {//Constructor for Teacher
+Teacher::Teacher(vector<Department*> dpt, int size, int ID, string Name) {//Constructor for Teacher
     for (int i = 0; i < size; i++)
         departments.push_back(dpt[i]);
     id = ID;
