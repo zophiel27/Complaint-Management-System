@@ -52,7 +52,7 @@ private:
 	vector<Employee*> assignedEmployees; // Employees assigned to the complaint
 	string feedback; // Teacher's feedback
 public:
-    Complaint(string, Teacher*, Department*);
+    Complaint(string, Teacher*, Department*&);
     void assignedEmployee(vector<Employee*> assignedEmployees);
     void printInfo();
     void temp();
@@ -125,7 +125,8 @@ public:
     string getName();
     void reviewTask();
     void reviewRequest();
-    void assignTask(Complaint* task);
+    void getTask(Complaint* task);
+    void assignTask();
     void checkComplainProgress();
     void notifySystem();
     void print();
