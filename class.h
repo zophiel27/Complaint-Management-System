@@ -55,6 +55,7 @@ public:
     Complaint(string, Teacher*, Department*&);
     void assignedEmployee(vector<Employee*> assignedEmployees);
     void printInfo();
+    void shiftStatus();
     void temp();
 
 };
@@ -71,7 +72,7 @@ private:
 public:
     Department(string);
     Department(string, vector<Employee*>, Manager*);
-    void addTask(Complaint *task);
+    void addTask(Complaint *&task);
     void addManager();
     void addEmployees();
     void updateTaskList();
@@ -98,7 +99,7 @@ public:
     Employee(string, vector<Complaint*>);
     int getID();
     string getName();
-    void receiveTask(Complaint*);
+    void receiveTask(Complaint*&);
     void checkTasks();
     void completeTask();
     void updateSystem();
@@ -125,7 +126,7 @@ public:
     string getName();
     void reviewTask();
     void reviewRequest();
-    void getTask(Complaint* task);
+    void getTask(Complaint* &task);
     void checkTasks();
     void assignTask();
     void checkComplainProgress();

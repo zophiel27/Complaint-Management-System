@@ -79,6 +79,10 @@ Complaint::Complaint(string Description, Teacher* Teacher, Department*& Dept) {/
     datefiled = time(0);
     //cout<<ctime(&datefiled);
 }
+void Complaint::shiftStatus()
+{
+    
+}
 void Department::login(int UID,string Uname,bool& logged)//Login for the respective department, i.e its manager and employees
 {
 
@@ -110,7 +114,7 @@ Department::Department(string n, vector<Employee*> Employees, Manager* Mngr) //C
     employees = Employees;
     manager = Mngr;
 }
-void Department::addTask(Complaint* task)//Add the complain in the array of complaint
+void Department::addTask(Complaint* &task)//Add the complain in the array of complaint
 {
     tasks.push_back(task);
 }
@@ -201,13 +205,13 @@ string Employee::getName()
 {
     return name;
 }
-void Employee::receiveTask(Complaint* t)//Gets tje task for employee to complete
+void Employee::receiveTask(Complaint* &t)//Gets tje task for employee to complete
 {
     tasks.push_back(t);
     tasks[0]->printInfo();
     cout << "received by "<<name;
     _getch();
-
+    
 }
 void Employee::checkTasks()
 {
@@ -221,7 +225,7 @@ void Employee::completeTask()
     checkTasks();
     cout<<"Select task to Complete: ";
     cin>>tsk;
-    tasks[tsk];
+    tasks[tsk-1]->shiftStatus();
 }
 void Manager::checkTasks()
 {
@@ -282,7 +286,7 @@ Manager::Manager(string Name, vector<Employee*> Employees) {//Constructor for Ma
     name = Name;
     employees = Employees;
 }
-void Manager::getTask(Complaint* task)
+void Manager::getTask(Complaint* &task)
 {
     tasks.push_back(task);
     
