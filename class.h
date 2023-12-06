@@ -21,6 +21,8 @@ private:
     vector<Teacher*>teachers; 
 public:
     System();//Dept initialized, hard coded teachers initialized
+    void readDept();
+    void readTeachers();
     void printUI();
     void Login();
     void notifyteacher();
@@ -73,8 +75,7 @@ public:
     Department(string);
     Department(string, vector<Employee*>, Manager*);
     void addTask(Complaint *&task);
-    void addManager();
-    void addEmployees();
+    void readStaff();
     void updateTaskList();
     void pushforReview();
     void notifyteacher();
@@ -95,8 +96,8 @@ private:
     vector<Complaint*> tasks;
     
 public:
-    Employee(string);
-    Employee(string, vector<Complaint*>);
+    Employee(int,string);
+    Employee(int,string, vector<Complaint*>);
     int getID();
     string getName();
     void receiveTask(Complaint*&);
@@ -120,8 +121,9 @@ private:
     vector<Complaint*> assignedtasks;
     vector<Complaint*> completedtasks;
 public:
-    Manager(string);
-    Manager(string, vector<Employee*>);
+    Manager(int,string);
+    Manager(int,string, vector<Employee*>);
+    void getEmployees(vector<Employee*>);
     int getID();
     string getName();
     void reviewTask();
@@ -147,7 +149,7 @@ private:
     vector<Department*> departments;
     int no;
 public:
-    Teacher(vector<Department*> departments, int size, int, string);
+    Teacher(vector<Department*> departments, int, string);
     void fileComplaint(); //if there is any problem, or if any service/equipment is required, teacher shall forward her request to a particular supporting department such as IT, accounts or admin.
     void printUI();
     void teacherUI();

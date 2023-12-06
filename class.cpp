@@ -7,12 +7,51 @@ int Manager::mgrID = 0;
 
 System::System()//Constructor for System
 {
-    string tname = "Rafay";
-    string dname = "IT";
-    Department* dpt =  new Department(dname);
-    departments.push_back(dpt);
-    Teacher* tr = new Teacher(departments, 1, 1, tname);
-    teachers.push_back(tr);
+    readDept();
+    readTeachers();
+}
+void System::readDept()
+{
+    // Open the file
+    ifstream inputFile("departments.txt");
+    // Check if the file is opened successfully
+    if (!inputFile.is_open()) {
+        cout << "Error opening the file 'departments.txt'" <<endl;
+        _getch();
+        return;
+    }
+    // Variables to store data read from the file
+    string name;
+    // Read data from the file until the end is reached
+    while (inputFile >> name) {
+        // Store data in arrays
+        Department* dpt = new Department(name);
+        departments.push_back(dpt);
+    }
+    // Close the file
+    inputFile.close();
+}
+void System::readTeachers()
+{
+    // Open the file
+    ifstream inputFile("teachers.txt");
+    // Check if the file is opened successfully
+    if (!inputFile.is_open()) {
+        cout << "Error opening the file 'teachers.txt'" <<endl;
+        _getch();
+        return;
+    }
+    // Variables to store data read from the file
+    int id;
+    string name;
+    // Read data from the file until the end is reached
+    while (inputFile >> id >> name) {
+        // Store data in arrays
+        Teacher* tr = new Teacher(departments,id, name);
+        teachers.push_back(tr);
+    }
+    // Close the file
+    inputFile.close();
 }
 void System::printUI()//Prints Base level UI
 {
@@ -106,8 +145,7 @@ void Department::login(int UID,string Uname,bool& logged)//Login for the respect
 }
 Department::Department(string n) //Constructor for Department
 {   name = n;
-    addEmployees();
-    addManager();
+    readStaff();
 }
 Department::Department(string n, vector<Employee*> Employees, Manager* Mngr) //Constructor for Department
 {   name = n;
@@ -118,16 +156,38 @@ void Department::addTask(Complaint* &task)//Add the complain in the array of com
 {
     tasks.push_back(task);
 }
-void Department::addEmployees()
+void Department:: readStaff()
 {
-    Employee* e1 = new Employee("emp1");
-    Employee* e2 = new Employee("emp2");
-    employees.push_back(e1);
-    employees.push_back(e2);
-}
-void Department::addManager()
-{
-    manager = new Manager("manager", employees);
+    // Open the file
+    string fname=name;
+    fname+=".txt";
+    ifstream inputFile(fname);
+    // Check if the file is opened successfully
+    if (!inputFile.is_open()) {
+        cout << "Error opening the file "<<fname<<endl;
+        _getch();
+        return;
+    }
+    // Variables to store data read from the file
+    string name;
+    int id,i=0;
+
+    // Read data from the file until the end is reached
+    while (inputFile >>id >> name) {
+        // Store data in arrays
+        if(i)
+        {
+            Employee* emp = new Employee(id, name);
+            employees.push_back(emp);
+        }
+        else{
+            manager=new Manager(id,name);
+        }
+        i++;
+    }
+    manager->getEmployees(employees);
+    // Close the file
+    inputFile.close();
 }
 void Department::print() 
 {
@@ -186,14 +246,12 @@ void Employee::print() {
         cout << endl;
     }
 }
-Employee::Employee(string Name) {//Constructor for for Employee
-    empID++;
-    id = empID;
+Employee::Employee(int ID,string Name) {//Constructor for for Employee
+    id = ID;
     name = Name;
 }
-Employee::Employee(string Name, vector<Complaint*> Tasks) {//Constructor for for Employee
-    empID++;
-    id = empID;
+Employee::Employee(int ID,string Name, vector<Complaint*> Tasks) {//Constructor for for Employee
+    id = ID;
     name = Name;
     tasks = Tasks;
 }
@@ -275,15 +333,17 @@ void Manager::print() {
         employees[i]->print();
     }
 }
-Manager::Manager(string Name) {//Constructor for Manager
-    mgrID++;
-    id = mgrID;
+Manager::Manager(int ID,string Name) {//Constructor for Manager
+    id = ID;
     name = Name;
 }
-Manager::Manager(string Name, vector<Employee*> Employees) {//Constructor for Manager
-    mgrID++;
-    id = mgrID;
+Manager::Manager(int ID,string Name, vector<Employee*> Employees) {//Constructor for Manager
+    id = ID;
     name = Name;
+    employees = Employees;
+}
+void Manager::getEmployees(vector<Employee*> Employees)
+{
     employees = Employees;
 }
 void Manager::getTask(Complaint* &task)
@@ -363,8 +423,8 @@ void Teacher::teacherUI()
     }
     return;
 }
-Teacher::Teacher(vector<Department*> dpt, int size, int ID, string Name) {//Constructor for Teacher
-    for (int i = 0; i < size; i++)
+Teacher::Teacher(vector<Department*> dpt, int ID, string Name) {//Constructor for Teacher
+    for (int i = 0; i < dpt.size(); i++)
         departments.push_back(dpt[i]);
     id = ID;
     name = Name;
