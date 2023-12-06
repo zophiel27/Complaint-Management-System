@@ -10,7 +10,7 @@ using namespace std;
 int main()
 {
     System *s = new System();
-    s->Login();
+    s->start();
     //system("pause");
     return 0;
 }

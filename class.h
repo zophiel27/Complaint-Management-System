@@ -21,6 +21,7 @@ private:
     vector<Teacher*>teachers; 
 public:
     System();//Dept initialized, hard coded teachers initialized
+    void start();
     void readDept();
     void readTeachers();
     void printUI();
@@ -36,6 +37,7 @@ class Person
 //    int getID()=0;
 //    string getName()=0;
 };
+
 enum ComplaintStatus { NEW, ASSIGNED, RESOLVED, CLOSED };
 
 // Complaint Class
@@ -57,8 +59,9 @@ public:
     Complaint(string, Teacher*, Department*&);
     void assignedEmployee(vector<Employee*> assignedEmployees);
     void printInfo();
-    void shiftStatus();
+    void shiftStatus(ComplaintStatus);
     void temp();
+    void createReport();
 
 };
 
@@ -81,9 +84,9 @@ public:
     void notifyteacher();
     void assignTask();
     void completeTask();
-    void print();
+    void printStaff();
+    void createReport();
     void login(int, string,bool &logged);
-
 };
 
 // Employee Class
@@ -136,6 +139,7 @@ public:
     void print();
     void managerUI();
     void printUI();
+    int getIndex(int);
 };
 
 // Teacher Class
