@@ -47,19 +47,19 @@ private:
     Department* department; // Department assigned to
 	ComplaintStatus status; // Complaint status (new, assigned, resolved or closed. The teacher or manager can view its status any time)
 	time_t datefiled; // Date complaint was filed
-	time_t dateAssigned; // Date complaint was assigned to an employee
-	time_t dateResolved; // Date complaint was marked as resolved
-	time_t dateClosed; // Date complaint was closed
 	string assignedEmployee; // Employees assigned to the complaint
 	string feedback; // Teacher's feedback
 public:
+    time_t dateAssigned; // Date complaint was assigned to an employee
+	time_t dateResolved; // Date complaint was marked as resolved
+	time_t dateClosed; // Date complaint was closed
     Complaint(string, Teacher*, Department*&);
     void assignEmployee(string);
     void printInfo();
     void printDetails();
     void shiftStatus(ComplaintStatus);
     ComplaintStatus getStatus();
-    void temp();
+    void pushTask();
     void addFeedback(string);
     void notify();
     void createReport();
@@ -96,7 +96,6 @@ public:
 class Employee //:public Person
 {
 private:
-    static int empID; // Employee ID
     int id;
 	string name; // Employee name
     vector<Complaint*> tasks;
@@ -119,7 +118,6 @@ public:
 class Manager //:public Person
 {
 private:
-    static int mgrID;
     int id;
 	string name; // manager name
     vector<Employee*> employees;
@@ -151,7 +149,6 @@ private:
     string notifications;
     vector<Complaint*> complain;
     vector<Department*> departments;
-    int no;
 public:
     Teacher(vector<Department*> departments, int, string);
     void fileComplaint(); //if there is any problem, or if any service/equipment is required, teacher shall forward her request to a particular supporting department such as IT, accounts or admin.
@@ -166,7 +163,7 @@ public:
     void printComplains();
     void print();//Print info
     int getID();
-    void temp();
+    void pushTask();
     string getName();
 };
 
@@ -181,8 +178,6 @@ public:
     void addEmployee();
     void addManager();
     void addTeacher();
-    void removeEmployee();
-    void removeManager();
     void removeTeacher();
     int getID();
     string getName();
