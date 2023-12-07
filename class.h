@@ -6,6 +6,7 @@
 #include <ctime>
 #include <conio.h>
 using namespace std;
+
 class System;
 class Complaint;
 class Department;
@@ -14,14 +15,17 @@ class Employee;
 class Teacher;
 class Admin;
 
+void start();
+
 //Class for main system
 class System{
 private:
+    Admin* admin;
     vector<Department*>departments;
     vector<Teacher*>teachers; 
 public:
     System();//Dept initialized, hard coded teachers initialized
-    void start();
+    void loadAdmin(Admin*);
     void readDept();
     void readTeachers();
     void printUI();
@@ -31,14 +35,7 @@ public:
     void generateReport();
 };
 
-class Person
-{
-//public:
-//    int getID()=0;
-//    string getName()=0;
-};
-
-enum ComplaintStatus { NEW, ASSIGNED, RESOLVED, CLOSED };
+enum ComplaintStatus { NEW, ASSIGNED, RESOLVED,COMPLETED, CLOSED };
 
 // Complaint Class
 class Complaint {
@@ -53,14 +50,18 @@ private:
 	time_t dateAssigned; // Date complaint was assigned to an employee
 	time_t dateResolved; // Date complaint was marked as resolved
 	time_t dateClosed; // Date complaint was closed
-	vector<Employee*> assignedEmployees; // Employees assigned to the complaint
+	string assignedEmployee; // Employees assigned to the complaint
 	string feedback; // Teacher's feedback
 public:
     Complaint(string, Teacher*, Department*&);
-    void assignedEmployee(vector<Employee*> assignedEmployees);
+    void assignEmployee(string);
     void printInfo();
+    void printDetails();
     void shiftStatus(ComplaintStatus);
+    ComplaintStatus getStatus();
     void temp();
+    void addFeedback(string);
+    void notify();
     void createReport();
 
 };
@@ -73,16 +74,18 @@ private:
     Manager* manager;
     vector<Complaint*> tasks;
     vector<Complaint*> assignedtasks;
+    vector<Complaint*> resolvedtasks;
     vector<Complaint*> completedtasks;
+
 public:
     Department(string);
     Department(string, vector<Employee*>, Manager*);
     void addTask(Complaint *&task);
+    string getName();
     void readStaff();
     void updateTaskList();
-    void pushforReview();
     void notifyteacher();
-    void assignTask();
+    void pushTask();
     void completeTask();
     void printStaff();
     void createReport();
@@ -104,7 +107,7 @@ public:
     int getID();
     string getName();
     void receiveTask(Complaint*&);
-    void checkTasks();
+    void checkTasks(ComplaintStatus);
     void completeTask();
     void updateSystem();
     void print();
@@ -121,8 +124,6 @@ private:
 	string name; // manager name
     vector<Employee*> employees;
     vector<Complaint*> tasks;
-    vector<Complaint*> assignedtasks;
-    vector<Complaint*> completedtasks;
 public:
     Manager(int,string);
     Manager(int,string, vector<Employee*>);
@@ -130,9 +131,8 @@ public:
     int getID();
     string getName();
     void reviewTask();
-    void reviewRequest();
     void getTask(Complaint* &task);
-    void checkTasks();
+    void checkTasks(ComplaintStatus);
     void assignTask();
     void checkComplainProgress();
     void notifySystem();
@@ -148,7 +148,7 @@ class Teacher //:public Person
 private:
 	int id; // Teacher ID
 	string name; // Teacher name
-    vector<string> notifications;
+    string notifications;
     vector<Complaint*> complain;
     vector<Department*> departments;
     int no;
@@ -162,6 +162,7 @@ public:
     void printNotifications();
     void clearNotifications();
     void recordFeedback();
+    void setNoti();
     void printComplains();
     void print();//Print info
     int getID();
@@ -174,12 +175,17 @@ class Admin{
 private:
 	int id; // Admin ID
 	string name; // Admin name
+    System *sys;
 public:
-    Admin(int, string);
+    Admin(int, string,System *);
     void addEmployee();
     void addManager();
     void addTeacher();
     void removeEmployee();
     void removeManager();
     void removeTeacher();
+    int getID();
+    string getName();
+    void printUI();
+    void adminUI();
 };
