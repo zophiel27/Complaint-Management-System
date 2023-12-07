@@ -1,3 +1,4 @@
+//Complaint Management System by Abdul Rafay(21l5497) & Zophiel Suleman (21l1893)
 #include <iostream>
 #include <stdio.h>
 #include <string>
@@ -10,6 +11,5 @@ using namespace std;
 int main()
 {
     start();
-    //system("pause");
     return 0;
 }
