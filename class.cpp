@@ -807,7 +807,7 @@ void Admin::adminUI()
             addTeacher();
             break;
         case 4:
-            removeTeacher();
+            //removeTeacher();
             break;
         case 5:
             return;
@@ -843,12 +843,8 @@ void Admin::addManager()
     cout << "Which department do you want to add to: IT Accounts Admin: ";
     cin >> deptname;
     filename = deptname + ".txt";
-    cout << "Enter ID: ";
-    cin >> id;
-    cout << "Enter name: ";
-    cin >> name;
 
-    ofstream outFile(filename);
+    fstream outFile(filename);
     if (!outFile.is_open())
     {
         cout << "Error opening " << filename << endl;
@@ -861,6 +857,8 @@ void Admin::addManager()
     cin >> id;
     cout << "Enter name: ";
     cin >> name;
+
+    outFile.seekg(0, ios::beg);
     outFile << id << " " << name << endl;
     
     sys->addManager(new Manager(id, name), deptname);
@@ -873,10 +871,6 @@ void Admin::addEmployee()
     cout << "Which department do you want to add to: IT Accounts Admin: ";
     cin >> deptname;
     filename = deptname + ".txt";
-    cout << "Enter ID: ";
-    cin >> id;
-    cout << "Enter name: ";
-    cin >> name;
 
     ofstream outFile(filename, ios_base::app);
     if (!outFile.is_open())
