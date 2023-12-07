@@ -184,6 +184,7 @@ void Complaint::printDetails()
     {
         cout << "\nFeedback: " << feedback;
     }
+    cout<<"Date Filed: "<<ctime(&datefiled);;
     cout << endl;
 }
 void Complaint::addFeedback(string s)
