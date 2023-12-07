@@ -144,6 +144,30 @@ void System::generateReport()
         departments[i]->createReport();
     }
 }
+void System::addManager(Manager* m, string deptname)
+{
+    for (int i = 0; i < departments.size(); i++)
+    {
+        if (departments[i]->getName() == deptname)
+        {
+            departments[i]->updateManager(m);
+        }
+    }
+}
+void System::addEmployee(Employee* e, string deptname)
+{
+    for (int i = 0; i < departments.size(); i++)
+    {
+        if (departments[i]->getName() == deptname)
+        {
+            departments[i]->updateEmployee(e);
+        }
+    }
+}
+void System::addTeacher(int id, string name)
+{
+    teachers.push_back(new Teacher(departments, id, name));
+}
 ComplaintStatus Complaint::getStatus()
 {
     return status;
@@ -333,7 +357,14 @@ void Department::printStaff()
         employees[i]->print();
     }
 }
-
+void Department::updateManager(Manager* m)
+{
+    manager = m;
+}
+void Department::updateEmployee(Employee* e)
+{
+    employees.push_back(e);
+}
 void Department::createReport()
 {
 
@@ -755,7 +786,7 @@ void Admin::printUI()
     system("cls");
     cout << "Welcome " << name;
     cout << "\nSelect from the options below:";
-    cout << "\nPress 1 Add Manager\nPress 2 Remove Manager\nPress 3 Add Employee\nPress 4 Remove Employee\nPress 5 Add Teacher\nPress 6 Remove Teacher\nPress 7 Logout\n";
+    cout << "\nPress 1 Add Manager\nPress 2 Add Employee\nPress 3 Add Teacher\nPress 4 Remove Teacher\nPress 5 Logout\n";
 }
 void Admin::adminUI()
 {
@@ -767,21 +798,102 @@ void Admin::adminUI()
         switch (option)
         {
         case 1:
+            addManager();
             break;
         case 2:
+            addEmployee();
             break;
         case 3:
+            addTeacher();
             break;
         case 4:
+            removeTeacher();
             break;
         case 5:
-            break;
-        case 6:
-            break;
-        case 7:
             return;
         }
     }
     return;
 }
+void Admin::addTeacher()
+{
+    int id;
+    string name;
+    cout << "Enter ID: ";
+    cin >> id;
+    cout << "Enter name: ";
+    cin >> name;
 
+    string filename = "teachers.txt";
+    ofstream outFile(filename, ios_base::app);
+    if (!outFile.is_open()){
+        cout << "Error opening " << filename << endl;
+        _getch();
+        return;
+    }
+
+    outFile << id << " " << name << endl;
+
+    sys->addTeacher(id, name);
+    outFile.close();
+}
+void Admin::addManager()
+{
+    string filename, deptname;
+    cout << "Which department do you want to add to: IT Accounts Admin: ";
+    cin >> deptname;
+    filename = deptname + ".txt";
+    cout << "Enter ID: ";
+    cin >> id;
+    cout << "Enter name: ";
+    cin >> name;
+
+    ofstream outFile(filename);
+    if (!outFile.is_open())
+    {
+        cout << "Error opening " << filename << endl;
+        _getch();
+        return;
+    }
+    int id;
+    string name;
+    cout << "Enter ID: ";
+    cin >> id;
+    cout << "Enter name: ";
+    cin >> name;
+    outFile << id << " " << name << endl;
+    
+    sys->addManager(new Manager(id, name), deptname);
+
+    outFile.close();
+}
+void Admin::addEmployee()
+{
+    string filename, deptname;
+    cout << "Which department do you want to add to: IT Accounts Admin: ";
+    cin >> deptname;
+    filename = deptname + ".txt";
+    cout << "Enter ID: ";
+    cin >> id;
+    cout << "Enter name: ";
+    cin >> name;
+
+    ofstream outFile(filename, ios_base::app);
+    if (!outFile.is_open())
+    {
+        cout << "Error opening " << filename << endl;
+        _getch();
+        return;
+    }
+    int id;
+    string name;
+    cout << "Enter ID: ";
+    cin >> id;
+    cout << "Enter name: ";
+    cin >> name;
+
+    outFile << id << " " << name << endl;
+
+    sys->addEmployee(new Employee(id, name), deptname);
+    outFile.close();
+}

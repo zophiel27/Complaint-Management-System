@@ -33,6 +33,9 @@ public:
     void notifyteacher();
     void notifymanager();
     void generateReport();
+    void addTeacher(int, string);
+    void addManager(Manager*, string);
+    void addEmployee(Employee*, string);
 };
 
 enum ComplaintStatus { NEW, ASSIGNED, RESOLVED,COMPLETED, CLOSED };
@@ -90,6 +93,8 @@ public:
     void printStaff();
     void createReport();
     void login(int, string,bool &logged);
+    void updateManager(Manager*);
+    void updateEmployee(Employee*);
 };
 
 // Employee Class
