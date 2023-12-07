@@ -182,9 +182,23 @@ void Complaint::shiftStatus(ComplaintStatus s)
 }
 void Complaint::createReport()
 {
-    //Department report file open,
-    //Add complains
-    //department+"report.txt"
+    string filename = department->getName();
+    filename += "Report.txt";
+    ofstream outFile(filename, ios_base::app);
+    if (!outFile.is_open())
+    {
+        cout << "Error opening " << filename << endl;
+        _getch();
+        return;
+    }
+
+    outFile << "Complaint ID: " << id << "\nDescription: " << description << "\nStatus: " << statusArray[status] << "\nEmployee Assigned: " << assignedEmployee;
+    if (feedback != "\0")
+    {
+        outFile << "\nFeedback: " << feedback;
+    }
+    outFile << "\n\n";
+    outFile.close();
 }
 void  Complaint::assignEmployee(string name)
 {
@@ -330,7 +344,8 @@ void Department::createReport()
     for (int i = 0; i < resolvedtasks.size(); i++)
     {
         resolvedtasks[i]->createReport();
-    }for (int i = 0; i < completedtasks.size(); i++)
+    }
+    for (int i = 0; i < completedtasks.size(); i++)
     {
         completedtasks[i]->createReport();
     }
@@ -356,7 +371,7 @@ void Employee::printUI()
 void Employee::employeesUI()
 {
     int option;
-    while (1) { // (for now) this while loop is to stay logged in
+    while (1) {
         printUI();
         cin >> option;
         system("cls");
@@ -405,7 +420,7 @@ void Employee::receiveTask(Complaint*& t)//Gets the task for employee to complet
 {
     t->assignEmployee(name);
     tasks.push_back(t);
-    tasks[tasks.size() - 1]->printInfo();///////
+    tasks[tasks.size() - 1]->printInfo();
     cout << "received by " << name;
     t->shiftStatus(ASSIGNED);
     _getch();
@@ -466,7 +481,7 @@ void Manager::printUI()
 void Manager::managerUI()
 {
     int option;
-    while (1) { // (for now) this while loop is to stay logged in
+    while (1) { 
         printUI();
         cin >> option;
         system("cls");
@@ -528,7 +543,6 @@ int Manager::getIndex(int id)
 }
 void Manager::reviewTask()
 {
-
     int tsks;
     checkTasks(RESOLVED);
     cout << "\nEnter the task number you want to Review: ";
@@ -578,10 +592,7 @@ void Manager::assignTask()//Assigns 1 task to the selected emp
         _getch();
         return;
     }
-    //int i = getIndex(emp);
-    //if (i != -1) {
     employees[emp - 1]->receiveTask(tasks[tsks - 1]);
-    //}
 }
 void Teacher::print() {
     cout << "Teacher ID: " << id << ", Name: " << name << endl;
@@ -614,7 +625,7 @@ void Teacher::teacherUI()
 {
     int option;
 
-    while (1) { // (for now) this while loop is to stay logged in
+    while (1) { 
         printUI();
         cin >> option;
         system("cls");
