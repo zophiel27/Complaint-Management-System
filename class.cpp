@@ -2,28 +2,61 @@
 using namespace std;
 
 int Complaint::cID = 0;
-int Employee::empID = 0;
-int Manager::mgrID = 0;
+const char* statusArray[] = { "NEW", "ASSIGNED", "RESOLVED","COMPLETED", "CLOSED" };
 
+void start()
+{
+    int op;
+    System* s = new System();
+    Admin* admin = new Admin(0, "Admin", s);
+    s->loadAdmin(admin);
+    while (1) {
+        s->printUI();
+        cin >> op;
+        switch (op)
+        {
+        case 1:
+            s->Login();
+            break;
+        case 2:
+            s->generateReport();
+            cout << "\nPress any key to continue...";
+            _getch();
+            break;
+        case 3:
+            return;
+        default:
+            cout << "Invalid\nPress any key to continue...";
+            _getch();
+            break;
+        }
+    }
+}
 System::System()//Constructor for System
 {
     readDept();
     readTeachers();
 }
+void System::loadAdmin(Admin* ad)
+{
+    admin = ad;
+}
 void System::readDept()
 {
     // Open the file
-    ifstream inputFile("departments.txt");
+    string filename = "departments.txt";
+    ifstream inputFile(filename);
     // Check if the file is opened successfully
     if (!inputFile.is_open()) {
-        cout << "Error opening the file 'departments.txt'" <<endl;
+        cout << "Error opening the file " << filename << endl;
         _getch();
         return;
     }
     // Variables to store data read from the file
     string name;
     // Read data from the file until the end is reached
-    while (inputFile >> name) {
+    while (inputFile >> name) 
+    {
         // Store data in arrays
         Department* dpt = new Department(name);
         departments.push_back(dpt);
@@ -37,7 +70,7 @@ void System::readTeachers()
     ifstream inputFile("teachers.txt");
     // Check if the file is opened successfully
     if (!inputFile.is_open()) {
-        cout << "Error opening the file 'teachers.txt'" <<endl;
+        cout << "Error opening the file 'teachers.txt'" << endl;
         _getch();
         return;
     }
@@ -45,9 +78,10 @@ void System::readTeachers()
     int id;
     string name;
     // Read data from the file until the end is reached
-    while (inputFile >> id >> name) {
+    while (inputFile >> id >> name) 
+    {
         // Store data in arrays
-        Teacher* tr = new Teacher(departments,id, name);
+        Teacher* tr = new Teacher(departments, id, name);
         teachers.push_back(tr);
     }
     // Close the file
@@ -57,57 +91,80 @@ void System::printUI()//Prints Base level UI
 {
     system("cls");
     cout << "Welcome to the Complaint Management System";
-    cout << "\nPress 1 to Login || Press 0 to Exit: ";
+    cout << "\nPress 1 to Login || Press 2 to Generate Report || Press 3 to Exit\n";
 }
 void System::Login()//Login Function
 {
     int temp = 1;
     int UID;
     string Uname;
-    while (temp)
+    bool logged = 0;
+    if (temp)
     {
-        bool logged = 0;
-        printUI();
-        cin >> temp;
-        if (temp)
+        cout << "Enter ID: ";
+        cin >> UID;
+        cout << "Enter your name: ";
+        cin >> Uname;
+        for (int i = 0; i < teachers.size() && !logged; i++)
         {
-            cout << "Enter ID: ";
-            cin >> UID;
-            cout << "Enter your name: ";
-            cin >> Uname;
-            for (int i = 0; i < teachers.size() && !logged; i++)
-            {
-                if (UID == teachers[i]->getID())
-                    if (Uname == teachers[i]->getName())
-                    {
-                        logged = 1;
-                        teachers[i]->teacherUI();
-                    }
-            }
-            if (!logged)
-            {
-                for (int i = 0; i < departments.size(); i++)
+            if (UID == teachers[i]->getID())
+                if (Uname == teachers[i]->getName())
                 {
-                    departments[i]->login(UID,Uname,logged);
+                    logged = 1;
+                    teachers[i]->teacherUI();
                 }
-            }
-            if (!logged)
+        }
+        if (!logged)
+        {
+            for (int i = 0; i < departments.size(); i++)
             {
-                cout << "\nInvalid Credentials\nPress 1 to Retry: ";
-                cin >> temp;
+                departments[i]->login(UID, Uname, logged);
             }
         }
+        if (!logged)
+        {
+            if (UID == admin->getID())
+                if (Uname == admin->getName())
+                {
+                    logged = 1;
+                    admin->adminUI();
+                }
+        }
+        if (!logged)
+        {
+            cout << "\nInvalid Credentials\nPress 1 to Retry: ";
+            cin >> temp;
+        }
     }
-
-
+}
+void System::generateReport()
+{
+    for (int i = 0; i < departments.size(); i++)
+    {
+        departments[i]->createReport();
+    }
+}
+ComplaintStatus Complaint::getStatus()
+{
+    return status;
 }
 void Complaint::printInfo()//Prints Info about complaint, status needs to be added 
 {
-
     cout << "Complaint ID: " << id << ", Description: " << description << endl;
-    //department->print();
-    //teacher->print();
-    
+}
+void Complaint::printDetails()
+{
+    printInfo();
+    cout << "Status: " << statusArray[status] << "\nDepartment: " << department->getName() << "\nEmployee Assigned: " << assignedEmployee;
+    if (feedback != "\0")
+    {
+        cout << "\nFeedback: " << feedback;
+    }
+    cout << endl;
+}
+void Complaint::addFeedback(string s)
+{
+    feedback = s;
 }
 Complaint::Complaint(string Description, Teacher* Teacher, Department*& Dept) {//Constructor for Complaint
     cID++;
@@ -116,13 +173,42 @@ Complaint::Complaint(string Description, Teacher* Teacher, Department*& Dept) {/
     teacher = Teacher;
     department = Dept;
     datefiled = time(0);
+    shiftStatus(NEW);
     //cout<<ctime(&datefiled);
 }
-void Complaint::shiftStatus()
+void Complaint::shiftStatus(ComplaintStatus s)
 {
-    
+    status = s;
 }
-void Department::login(int UID,string Uname,bool& logged)//Login for the respective department, i.e its manager and employees
+void Complaint::createReport()
+{
+    string filename = department->getName();
+    filename += "Report.txt";
+    ofstream outFile(filename, ios_base::app);
+    if (!outFile.is_open())
+    {
+        cout << "Error opening " << filename << endl;
+        _getch();
+        return;
+    }
+
+    outFile << "Complaint ID: " << id << "\nDescription: " << description << "\nStatus: " << statusArray[status] << "\nEmployee Assigned: " << assignedEmployee;
+    if (feedback != "\0")
+    {
+        outFile << "\nFeedback: " << feedback;
+    }
+    outFile << "\n\n";
+    outFile.close();
+}
+void  Complaint::assignEmployee(string name)
+{
+    assignedEmployee = name;
+}
+void Complaint::notify()
+{
+    teacher->setNoti();
+}
+void Department::login(int UID, string Uname, bool& logged)//Login for the respective department, i.e its manager and employees
 {
 
     for (int i = 0; i < employees.size() && !logged; i++)
@@ -132,56 +218,102 @@ void Department::login(int UID,string Uname,bool& logged)//Login for the respect
             {
                 logged = 1;
                 employees[i]->employeesUI();
+                updateTaskList();
             }
     }
-    if(!logged)
+    if (!logged)
         if (UID == manager->getID())
             if (Uname == manager->getName())
             {
                 logged = 1;
                 manager->managerUI();
+                updateTaskList();
+                notifyteacher();
             }
     return;
 }
+void Department::notifyteacher()
+{
+    for (int i = 0; i < resolvedtasks.size(); i++)
+    {
+        if (resolvedtasks[i]->getStatus() == COMPLETED)
+        {
+            completedtasks.push_back(resolvedtasks[i]);
+            for (int j = i; j < resolvedtasks.size() - 1; j++)
+            {
+                resolvedtasks[j] = resolvedtasks[j + 1];
+            }
+            resolvedtasks.pop_back();
+            i--;
+        }
+    }
+    for (int i = 0; i < completedtasks.size(); i++)
+    {
+        completedtasks[i]->notify();
+    }
+}
+void Department::updateTaskList()
+{
+    bool update = 0;
+    for (int i = 0; i < assignedtasks.size(); i++)
+    {
+        if (assignedtasks[i]->getStatus() == RESOLVED)
+        {
+            update = 1;
+            resolvedtasks.push_back(assignedtasks[i]);
+            for (int j = i; j < assignedtasks.size() - 1; j++)
+            {
+                assignedtasks[j] = assignedtasks[j + 1];
+            }
+            assignedtasks.pop_back();
+            i--;
+        }
+    }
+    if (update)
+        pushTask();
+}
+
 Department::Department(string n) //Constructor for Department
-{   name = n;
+{
+    name = n;
     readStaff();
 }
 Department::Department(string n, vector<Employee*> Employees, Manager* Mngr) //Constructor for Department
-{   name = n;
+{
+    name = n;
     employees = Employees;
     manager = Mngr;
 }
-void Department::addTask(Complaint* &task)//Add the complain in the array of complaint
+void Department::addTask(Complaint*& task)//Add the complain in the array of complaint
 {
     tasks.push_back(task);
 }
-void Department:: readStaff()
+void Department::readStaff()
 {
     // Open the file
-    string fname=name;
-    fname+=".txt";
+    string fname = name;
+    fname += ".txt";
     ifstream inputFile(fname);
     // Check if the file is opened successfully
     if (!inputFile.is_open()) {
-        cout << "Error opening the file "<<fname<<endl;
+        cout << "Error opening the file " << fname << endl;
         _getch();
         return;
     }
     // Variables to store data read from the file
     string name;
-    int id,i=0;
+    int id, i = 0;
 
     // Read data from the file until the end is reached
-    while (inputFile >>id >> name) {
+    while (inputFile >> id >> name) {
         // Store data in arrays
-        if(i)
+        if (i)
         {
             Employee* emp = new Employee(id, name);
             employees.push_back(emp);
         }
-        else{
-            manager=new Manager(id,name);
+        else {
+            manager = new Manager(id, name);
         }
         i++;
     }
@@ -189,7 +321,11 @@ void Department:: readStaff()
     // Close the file
     inputFile.close();
 }
-void Department::print() 
+string Department::getName()
+{
+    return name;
+}
+void Department::printStaff()
 {
     cout << "Dept Name: " << name << endl;
     manager->print();
@@ -198,11 +334,28 @@ void Department::print()
     }
 }
 
-void Department::assignTask()//pushes all the tasks to manager for assignment
+void Department::createReport()
 {
-    for(int i=0;tasks.size()!=0;i++)
+
+    for (int i = 0; i < assignedtasks.size(); i++)
     {
-        assignedtasks.push_back(tasks[tasks.size()-1]);
+        assignedtasks[i]->createReport();
+    }
+    for (int i = 0; i < resolvedtasks.size(); i++)
+    {
+        resolvedtasks[i]->createReport();
+    }
+    for (int i = 0; i < completedtasks.size(); i++)
+    {
+        completedtasks[i]->createReport();
+    }
+
+}
+void Department::pushTask()//pushes all the tasks to manager for assignment
+{
+    for (int i = 0; tasks.size() != 0; i++)
+    {
+        assignedtasks.push_back(tasks[tasks.size() - 1]);
         tasks.pop_back();
         manager->getTask(assignedtasks[i]);
     }
@@ -218,14 +371,14 @@ void Employee::printUI()
 void Employee::employeesUI()
 {
     int option;
-    while (1) { // (for now) this while loop is to stay logged in
+    while (1) {
         printUI();
         cin >> option;
         system("cls");
         switch (option)
         {
         case 1:
-            checkTasks();
+            checkTasks(ASSIGNED);
             _getch();
             break;
         case 2:
@@ -240,17 +393,17 @@ void Employee::employeesUI()
     return;
 }
 void Employee::print() {
-    cout << "\nEmployee ID: " << id << ", Name: " << name << "\nWith Tasks:";
+    cout << "Name: " << name << "\nWith Tasks: ";
     for (int i = 0; i < tasks.size(); i++) {
         tasks[i]->printInfo();
         cout << endl;
     }
 }
-Employee::Employee(int ID,string Name) {//Constructor for for Employee
+Employee::Employee(int ID, string Name) {//Constructor for for Employee
     id = ID;
     name = Name;
 }
-Employee::Employee(int ID,string Name, vector<Complaint*> Tasks) {//Constructor for for Employee
+Employee::Employee(int ID, string Name, vector<Complaint*> Tasks) {//Constructor for for Employee
     id = ID;
     name = Name;
     tasks = Tasks;
@@ -263,45 +416,72 @@ string Employee::getName()
 {
     return name;
 }
-void Employee::receiveTask(Complaint* &t)//Gets tje task for employee to complete
+void Employee::receiveTask(Complaint*& t)//Gets the task for employee to complete
 {
+    t->assignEmployee(name);
     tasks.push_back(t);
-    tasks[0]->printInfo();
-    cout << "received by "<<name;
+    tasks[tasks.size() - 1]->printInfo();
+    cout << "received by " << name;
+    t->shiftStatus(ASSIGNED);
     _getch();
-    
 }
-void Employee::checkTasks()
+void Employee::checkTasks(ComplaintStatus s)
 {
-    for(int i=0;i<tasks.size();i++)
-        {cout<<i+1<<") ";
-        tasks[i]->printInfo();}
+    if (tasks.size() == 0) {
+        cout << "None available\n";
+        _getch();
+        return;
+    }
+    for (int i = 0; i < tasks.size(); i++)
+    {
+        if (tasks[i]->getStatus() == s)
+        {
+            cout << i + 1 << ") ";
+            tasks[i]->printInfo();
+        }
+    }
 }
 void Employee::completeTask()
 {
     int tsk;
-    checkTasks();
-    cout<<"Select task to Complete: ";
-    cin>>tsk;
-    tasks[tsk-1]->shiftStatus();
+    checkTasks(ASSIGNED);
+    cout << "Select task to Complete: ";
+    cin >> tsk;
+    if (tsk > tasks.size() || tasks[tsk - 1]->getStatus() != ASSIGNED)
+    {
+        cout << "No task at that index ";
+        _getch();
+        return;
+    }
+    tasks[tsk - 1]->shiftStatus(RESOLVED);
 }
-void Manager::checkTasks()
+void Manager::checkTasks(ComplaintStatus s)
 {
-    for(int i=0;i<tasks.size();i++)
-        {cout<<i+1<<") ";
-        tasks[i]->printInfo();}
+    if (tasks.size() == 0) {
+        cout << "None available\n";
+        _getch();
+        return;
+    }
+    for (int i = 0; i < tasks.size(); i++)
+    {
+        if (tasks[i]->getStatus() == s)
+        {
+            cout << i + 1 << ") ";
+            tasks[i]->printDetails();
+        }
+    }
 }
 void Manager::printUI()
 {
     system("cls");
     cout << "Welcome " << name;
     cout << "\nSelect from the options below:";
-    cout << "\nPress 1 to Assign task\nPress 2 \nPress 3 \nPress 4 to Logout\n";
+    cout << "\nPress 1 to Assign task\nPress 2 Review Tasks\nPress 3 \nPress 4 to Logout\n";
 }
 void Manager::managerUI()
 {
     int option;
-    while (1) { // (for now) this while loop is to stay logged in
+    while (1) { 
         printUI();
         cin >> option;
         system("cls");
@@ -311,6 +491,7 @@ void Manager::managerUI()
             assignTask();
             break;
         case 2:
+            reviewTask();
             break;
         case 3:
             break;
@@ -333,11 +514,11 @@ void Manager::print() {
         employees[i]->print();
     }
 }
-Manager::Manager(int ID,string Name) {//Constructor for Manager
+Manager::Manager(int ID, string Name) {//Constructor for Manager
     id = ID;
     name = Name;
 }
-Manager::Manager(int ID,string Name, vector<Employee*> Employees) {//Constructor for Manager
+Manager::Manager(int ID, string Name, vector<Employee*> Employees) {//Constructor for Manager
     id = ID;
     name = Name;
     employees = Employees;
@@ -346,28 +527,72 @@ void Manager::getEmployees(vector<Employee*> Employees)
 {
     employees = Employees;
 }
-void Manager::getTask(Complaint* &task)
+void Manager::getTask(Complaint*& task)
 {
     tasks.push_back(task);
-    
+}
+int Manager::getIndex(int id)
+{
+    for (int i = 0; i < employees.size(); i++) {
+        if (id == employees[i]->getID())
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+void Manager::reviewTask()
+{
+    int tsks;
+    checkTasks(RESOLVED);
+    cout << "\nEnter the task number you want to Review: ";
+    cin >> tsks;
+    if (tsks > tasks.size() || tasks[tsks - 1]->getStatus() != RESOLVED)
+    {
+        cout << "No task at that index ";
+    }
+    else {
+        tasks[tsks - 1]->shiftStatus(COMPLETED);
+        tasks[tsks - 1]->printDetails();
+        cout << "Complete Task ";
+    }
+    _getch();
+    return;
 }
 void Manager::assignTask()//Assigns 1 task to the selected emp
 {
-    int emp,tsks;
-    checkTasks();
-    cout<<"\nEnter the task number you want to assign: ";
-    cin>>tsks;
-    assignedtasks.push_back(tasks[tsks-1]);
-    for(int i=tsks-1;i<tasks.size()-1;i++)
+    int emp, tsks;
+    checkTasks(NEW);
+    cout << "\nEnter the task number you want to assign: ";
+    cin >> tsks;
+    if (tsks > tasks.size() || tasks[tsks - 1]->getStatus() != NEW)
     {
-        tasks[i]=tasks[i+1];
+        cout << "No task at that index ";
+        _getch();
+        return;
     }
-    tasks.pop_back();                                                  
-    for (int i=0;i<employees.size();i++)
+    /*assignedtasks.push_back(tasks[tsks - 1]);
+    for (int i = tsks - 1; i < tasks.size() - 1; i++)
+    {
+        tasks[i] = tasks[i + 1];
+    }
+    tasks.pop_back();*/
+    for (int i = 0; i < employees.size(); i++)
+    {
+        cout << i + 1 << ") ";
         employees[i]->print();
+        cout << endl;
+    }
+
     cout << "\n\nSelect Employee to assign the task: ";
     cin >> emp;
-    employees[emp-1]->receiveTask(assignedtasks[assignedtasks.size()-1]);
+    if (emp > employees.size())
+    {
+        cout << "No Emp at that index ";
+        _getch();
+        return;
+    }
+    employees[emp - 1]->receiveTask(tasks[tsks - 1]);
 }
 void Teacher::print() {
     cout << "Teacher ID: " << id << ", Name: " << name << endl;
@@ -382,25 +607,25 @@ string Teacher::getName()
 }
 void Teacher::temp()
 {
-    for(int i=0;i<complain.size();i++)
+    for (int i = 0; i < complain.size(); i++)
         complain[i]->temp();
 }
 void Complaint::temp()
 {
-    department->assignTask();
+    department->pushTask();
 }
 void Teacher::printUI()
 {
     system("cls");
     cout << "Welcome " << name;
     cout << "\nSelect from the options below:";
-    cout << "\nPress 1 to file Complaint\nPress 2 to check notifications\nPress 3 to check status of Previous Complaints\nPress 4 to Logout\n";
+    cout << "\nPress 1 to file Complaint\nPress 2 to check notifications\nPress 3 to check status of Previous Complaints\nPress 4 Record Feedback\nPress 5 to Logout\n";
 }
 void Teacher::teacherUI()
 {
     int option;
 
-    while (1) { // (for now) this while loop is to stay logged in
+    while (1) { 
         printUI();
         cin >> option;
         system("cls");
@@ -410,13 +635,20 @@ void Teacher::teacherUI()
             fileComplaint();
             break;
         case 2:
+            checkNotifications();
+            cout << "\nPress any key to continue...";
+            _getch();
+            clearNotifications();
             break;
         case 3:
             printComplains();
-            cout << "\nPress any key to continue";
+            cout << "\nPress any key to continue...";
             _getch();
             break;
         case 4:
+            recordFeedback();
+            break;
+        case 5:
             temp();
             return;
         }
@@ -432,22 +664,124 @@ Teacher::Teacher(vector<Department*> dpt, int ID, string Name) {//Constructor fo
 }
 void Teacher::fileComplaint()
 {
+    int index = 10;
+    string input;
+    cout << "\nEnter name of department in which you want to file the complaint: IT Admin Accounts: ";
+    cin >> input;
+    for (int i = 0; i < departments.size(); i++)
+    {
+        if (departments[i]->getName() == input)
+        {
+            index = i;
+        }
+    }
+    if (index == 10)
+    {
+        cout << "Invalid Dept ";
+        _getch();
+        return;
+    }
     string des;
     cin.ignore();
     cout << "\nEnter Description of Complaint: ";
     getline(cin, des);
-    Complaint *comp=new Complaint(des, this, departments[0]);
+    Complaint* comp = new Complaint(des, this, departments[index]);
     complain.push_back(comp);
-    departments[0]->addTask(complain[complain.size()-1]);
-    
+    departments[index]->addTask(complain[complain.size() - 1]); //for now it is only going in department 1
+
+}
+void Teacher::setNoti() {
+    notifications = "One of Your comlain has been resolved and reviewed ";
+}
+void Teacher::clearNotifications()
+{
+    notifications = "\0";
+}
+void Teacher::checkNotifications()
+{
+    if (notifications == "\0")
+        cout << "\nNo Notifications ";
+    cout << notifications << endl;
 }
 void Teacher::printComplains() {
     for (int i = 0; i < complain.size(); i++) {
-        complain[i]->printInfo();
+        complain[i]->printDetails();
+        cout << endl;
     }
 }
-Admin::Admin(int ID, string Name) {//Constructor for Admin
+void Teacher::recordFeedback()
+{
+    int comp;
+    cout << "Which Complaint you want to record feedback for:\n";
+    for (int i = 0; i < complain.size(); i++)
+    {
+        if (complain[i]->getStatus() == COMPLETED)
+        {
+            cout << i + 1 << ") ";
+            complain[i]->printInfo();
+        }
+    }
+    cin >> comp;
+    if (comp - 1 < complain.size())
+        if (complain[comp - 1]->getStatus() == COMPLETED) {
+            complain[comp - 1]->shiftStatus(CLOSED);
+            string feedback;
+            cin.ignore();
+            cout << "Enter feedback: ";
+            getline(cin, feedback);
+            complain[comp - 1]->addFeedback(feedback);
+        }
+        else
+        {
+            cout << "Invalid Complaint ";
+            _getch();
+        }
+}
+Admin::Admin(int ID, string Name, System* s) {//Constructor for Admin
     id = ID;
     name = Name;
+    sys = s;
+}
+int Admin::getID()
+{
+    return id;
+}
+string Admin::getName()
+{
+    return name;
+}
+void Admin::printUI()
+{
+    system("cls");
+    cout << "Welcome " << name;
+    cout << "\nSelect from the options below:";
+    cout << "\nPress 1 Add Manager\nPress 2 Remove Manager\nPress 3 Add Employee\nPress 4 Remove Employee\nPress 5 Add Teacher\nPress 6 Remove Teacher\nPress 7 Logout\n";
+}
+void Admin::adminUI()
+{
+    int option;
+    while (1) { 
+        printUI();
+        cin >> option;
+        system("cls");
+        switch (option)
+        {
+        case 1:
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        case 4:
+            break;
+        case 5:
+            break;
+        case 6:
+            break;
+        case 7:
+            return;
+        }
+    }
+    return;
 }
 

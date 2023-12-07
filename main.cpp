@@ -9,8 +9,7 @@ using namespace std;
 
 int main()
 {
-    System *s = new System();
-    s->Login();
+    start();
     //system("pause");
     return 0;
 }
