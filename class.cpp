@@ -453,6 +453,7 @@ void Employee::receiveTask(Complaint*& t)//Gets the task for employee to complet
     tasks.push_back(t);
     tasks[tasks.size() - 1]->printInfo();
     cout << "received by " << name;
+    t->dateAssigned = time(0);
     t->shiftStatus(ASSIGNED);
     _getch();
 }
@@ -484,6 +485,7 @@ void Employee::completeTask()
         _getch();
         return;
     }
+    tasks[tsk-1]->dateResolved=time(0);
     tasks[tsk - 1]->shiftStatus(RESOLVED);
 }
 void Manager::checkTasks(ComplaintStatus s)
@@ -583,6 +585,7 @@ void Manager::reviewTask()
         cout << "No task at that index ";
     }
     else {
+        
         tasks[tsks - 1]->shiftStatus(COMPLETED);
         tasks[tsks - 1]->printDetails();
         cout << "Complete Task ";
@@ -636,12 +639,12 @@ string Teacher::getName()
 {
     return name;
 }
-void Teacher::temp()
+void Teacher::pushTask()
 {
     for (int i = 0; i < complain.size(); i++)
-        complain[i]->temp();
+        complain[i]->pushTask();
 }
-void Complaint::temp()
+void Complaint::pushTask()
 {
     department->pushTask();
 }
@@ -680,7 +683,7 @@ void Teacher::teacherUI()
             recordFeedback();
             break;
         case 5:
-            temp();
+            pushTask();
             return;
         }
     }
@@ -691,7 +694,6 @@ Teacher::Teacher(vector<Department*> dpt, int ID, string Name) {//Constructor fo
         departments.push_back(dpt[i]);
     id = ID;
     name = Name;
-    no = 0;
 }
 void Teacher::fileComplaint()
 {
@@ -755,6 +757,7 @@ void Teacher::recordFeedback()
     cin >> comp;
     if (comp - 1 < complain.size())
         if (complain[comp - 1]->getStatus() == COMPLETED) {
+            complain[comp-1]->dateClosed=time(0);
             complain[comp - 1]->shiftStatus(CLOSED);
             string feedback;
             cin.ignore();
