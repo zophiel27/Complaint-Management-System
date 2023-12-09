@@ -1,2 +1,2 @@
-# SDA
-Complaint Management System (SDA Project)
+# Complaint Management System
+SDA Project
