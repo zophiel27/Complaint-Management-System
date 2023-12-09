@@ -16,7 +16,7 @@ class Teacher;
 class Admin;
 
 void start();
-
+Admin* initAdmin(System*);
 //Class for main system
 class System{
 private:
@@ -179,7 +179,7 @@ private:
 	string name; // Admin name
     System *sys;
 public:
-    Admin(int, string,System *);
+    Admin(int, string, System *);
     void addEmployee();
     void addManager();
     void addTeacher();

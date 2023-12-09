@@ -8,7 +8,7 @@ void start()
 {
     int op;
     System* s = new System();
-    Admin* admin = new Admin(0, "Admin", s);
+    Admin* admin = initAdmin(s);
     s->loadAdmin(admin);
     while (1) {
         s->printUI();
@@ -22,7 +22,7 @@ void start()
             s->generateReport();
             cout << "\nPress any key to continue...";
             _getch();
-            break;
+            return;
         case 3:
             return;
         default:
@@ -31,6 +31,25 @@ void start()
             break;
         }
     }
+}
+Admin* initAdmin(System* s)
+{
+    string filename = "admins.txt";
+    ifstream inputFile(filename);
+    // Check if the file is opened successfully
+    if (!inputFile.is_open()) {
+        cout << "Error opening the file " << filename << endl;
+        _getch();
+        return nullptr;
+    }
+    int id;
+    string name;
+    // Read data from the file until the end is reached
+    inputFile >> id >> name;
+    // Close the file
+    inputFile.close();
+
+    return (new Admin(id, name, s));
 }
 System::System()//Constructor for System
 {
@@ -91,7 +110,7 @@ void System::printUI()//Prints Base level UI
 {
     system("cls");
     cout << "Welcome to the Complaint Management System";
-    cout << "\nPress 1 to Login || Press 2 to Generate Report || Press 3 to Exit\n";
+    cout << "\nPress 1 to Login || Press 2 to Generate Report and Exit || Press 3 to Exit\n";
 }
 void System::Login()//Login Function
 {
@@ -184,7 +203,7 @@ void Complaint::printDetails()
     {
         cout << "\nFeedback: " << feedback;
     }
-    cout<<"Date Filed: "<<ctime(&datefiled);;
+    //cout<<"Date Filed: "<<ctime(&datefiled);
     cout << endl;
 }
 void Complaint::addFeedback(string s)
@@ -199,7 +218,6 @@ Complaint::Complaint(string Description, Teacher* Teacher, Department*& Dept) {/
     department = Dept;
     datefiled = time(0);
     shiftStatus(NEW);
-    //cout<<ctime(&datefiled);
 }
 void Complaint::shiftStatus(ComplaintStatus s)
 {
@@ -510,7 +528,7 @@ void Manager::printUI()
     system("cls");
     cout << "Welcome " << name;
     cout << "\nSelect from the options below:";
-    cout << "\nPress 1 to Assign task\nPress 2 Review Tasks\nPress 3 \nPress 4 to Logout\n";
+    cout << "\nPress 1 to Assign task\nPress 2 Review Tasks\nPress 3 to Logout\n";
 }
 void Manager::managerUI()
 {
@@ -528,8 +546,6 @@ void Manager::managerUI()
             reviewTask();
             break;
         case 3:
-            break;
-        case 4:
             return;
         }
     }
@@ -790,7 +806,7 @@ void Admin::printUI()
     system("cls");
     cout << "Welcome " << name;
     cout << "\nSelect from the options below:";
-    cout << "\nPress 1 Add Manager\nPress 2 Add Employee\nPress 3 Add Teacher\nPress 4 Remove Teacher\nPress 5 Logout\n";
+    cout << "\nPress 1 Add Manager\nPress 2 Add Employee\nPress 3 Add Teacher\nPress 4 Logout\n";
 }
 void Admin::adminUI()
 {
@@ -811,9 +827,6 @@ void Admin::adminUI()
             addTeacher();
             break;
         case 4:
-            //removeTeacher();
-            break;
-        case 5:
             return;
         }
     }
